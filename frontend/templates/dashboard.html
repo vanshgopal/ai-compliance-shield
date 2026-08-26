@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance Dashboard - AI Compliance Shield</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>🛡️ AI Compliance Shield</h1>
+                <p>Compliance Dashboard</p>
+            </div>
+            <nav>
+                <a href="/" class="btn btn-secondary">New Scan</a>
+                <a href="/api/report/{{ scan_id }}/pdf" class="btn btn-primary">Download PDF</a>
+            </nav>
+        </header>
+
+        <main class="dashboard">
+            <section class="score-section">
+                <div class="score-card">
+                    <h3>Overall Compliance Score</h3>
+                    <div class="score-circle" id="scoreCircle">
+                        <span class="score-value">{{ "%.1f"|format(report.overall_score) }}</span>
+                        <span class="score-percent">%</span>
+                    </div>
+                    <p class="risk-badge risk-{{ report.risk_category.value }}">
+                        Risk Category: {{ report.risk_category.value|upper }}
+                    </p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card compliant">
+                        <h4>Compliant</h4>
+                        <span class="stat-number">{{ report.findings|selectattr('status', 'equalto', 'compliant')|list|length }}</span>
+                    </div>
+                    <div class="stat-card partial">
+                        <h4>Partial</h4>
+                        <span class="stat-number">{{ report.findings|selectattr('status', 'equalto', 'partially_compliant')|list|length }}</span>
+                    </div>
+                    <div class="stat-card non-compliant">
+                        <h4>Non-Compliant</h4>
+                        <span class="stat-number">{{ report.findings|selectattr('status', 'equalto', 'non_compliant')|list|length }}</span>
+                    </div>
+                    <div class="stat-card total">
+                        <h4>Total Findings</h4>
+                        <span class="stat-number">{{ report.findings|length }}</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="charts-section">
+                <div class="chart-container">
+                    <h3>Compliance Status Distribution</h3>
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Risk Level Breakdown</h3>
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </section>
+
+            <section class="findings-section">
+                <h3>Detailed Findings</h3>
+                <div class="findings-list">
+                    {% for finding in report.findings %}
+                    <div class="finding-card status-{{ finding.status.value }}">
+                        <div class="finding-header">
+                            <span class="finding-id">{{ finding.requirement_id }}</span>
+                            <span class="finding-status">{{ finding.status.value|upper }}</span>
+                        </div>
+                        <p class="finding-evidence">{{ finding.evidence }}</p>
+                        <p class="finding-recommendation"><strong>Recommendation:</strong> {{ finding.recommendation }}</p>
+                        {% if finding.file_path %}
+                        <p class="finding-location">📍 {{ finding.file_path }}:{{ finding.line_number }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="remediation-section">
+                <h3>Remediation Plan</h3>
+                {% if report.remediation_plan %}
+                <table class="remediation-table">
+                    <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>Requirement</th>
+                            <th>Priority</th>
+                            <th>Deadline</th>
+                            <th>Effort</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in report.remediation_plan %}
+                        <tr class="priority-{{ item.priority|lower }}">
+                            <td>{{ item.step }}</td>
+                            <td>{{ item.title }}</td>
+                            <td><span class="badge badge-{{ item.priority|lower }}">{{ item.priority }}</span></td>
+                            <td>{{ item.deadline }}</td>
+                            <td>{{ item.estimated_effort }}</td>
+                            <td>{{ item.recommendation[:50] }}...</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="no-remediation">✅ No remediation actions required. Your organization is fully compliant!</p>
+                {% endif %}
+            </section>
+
+            <section class="summary-section">
+                <h3>Executive Summary</h3>
+                <p>{{ report.summary }}</p>
+            </section>
+        </main>
+
+        <footer>
+            <p>Generated by AI Compliance Shield — {{ report.scan_date }}</p>
+        </footer>
+    </div>
+
+    <script>
+        const reportData = {
+            findings: [
+                {% for finding in report.findings %}
+                {
+                    status: "{{ finding.status.value }}",
+                    risk: "{{ finding.risk_level }}"
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        };
+
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        const statusData = {
+            labels: ['Compliant', 'Partially Compliant', 'Non-Compliant'],
+            datasets: [{
+                data: [
+                    reportData.findings.filter(f => f.status === 'compliant').length,
+                    reportData.findings.filter(f => f.status === 'partially_compliant').length,
+                    reportData.findings.filter(f => f.status === 'non_compliant').length,
+                ],
+                backgroundColor: ['#27ae60', '#f39c12', '#e74c3c']
+            }]
+        };
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: statusData,
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        const riskCtx = document.getElementById('riskChart').getContext('2d');
+        const riskData = {
+            labels: ['High', 'Medium', 'Low', 'None'],
+            datasets: [{
+                data: [
+                    reportData.findings.filter(f => f.risk === 'high').length,
+                    reportData.findings.filter(f => f.risk === 'medium').length,
+                    reportData.findings.filter(f => f.risk === 'low').length,
+                    reportData.findings.filter(f => f.risk === 'none').length,
+                ],
+                backgroundColor: ['#e74c3c', '#f39c12', '#3498db', '#95a5a6']
+            }]
+        };
+        new Chart(riskCtx, {
+            type: 'doughnut',
+            data: riskData,
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        const scoreCircle = document.getElementById('scoreCircle');
+        const score = {{ "%.1f"|format(report.overall_score) }};
+        if (score >= 80) {
+            scoreCircle.style.borderColor = '#27ae60';
+        } else if (score >= 60) {
+            scoreCircle.style.borderColor = '#f39c12';
+        } else {
+            scoreCircle.style.borderColor = '#e74c3c';
+        }
+    </script>
+</body>
+</html>

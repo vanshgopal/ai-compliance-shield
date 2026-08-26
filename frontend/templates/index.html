@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Compliance Shield - EU AI Act Compliance</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>🛡️ AI Compliance Shield</h1>
+                <p>EU AI Act Compliance Audit Tool for SMEs</p>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <h2>Ensure Your AI Systems Are EU AI Act Compliant</h2>
+                <p>Automated compliance scanning, reporting, and remediation planning.</p>
+                <p class="deadline-warning">⚠️ EU AI Act Enforcement: August 2, 2026 — Penalties up to €35M or 7% global revenue</p>
+            </section>
+
+            <section class="scan-form">
+                <h3>Start Your Compliance Audit</h3>
+                <form id="scanForm">
+                    <div class="form-group">
+                        <label for="companyName">Company Name</label>
+                        <input type="text" id="companyName" name="companyName" placeholder="Enter your company name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scanMethod">Scan Method</label>
+                        <select id="scanMethod" name="scanMethod">
+                            <option value="upload">Upload Files</option>
+                            <option value="path">Local Path</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="uploadGroup">
+                        <label for="files">Select Project Files</label>
+                        <input type="file" id="files" name="files" multiple accept=".py,.js,.ts,.jsx,.tsx,.java,.go,.rs,.cpp,.c,.cs,.rb,.php,.r,.scala,.yaml,.yml,.json,.toml,.ini,.cfg,.env,.txt">
+                        <p class="help-text">Select your source code and configuration files</p>
+                    </div>
+
+                    <div class="form-group hidden" id="pathGroup">
+                        <label for="projectPath">Project Path</label>
+                        <input type="text" id="projectPath" name="projectPath" placeholder="C:\path\to\your\project">
+                        <p class="help-text">Enter the full path to your project directory</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span class="btn-text">Start Audit</span>
+                        <span class="btn-loading hidden">Scanning...</span>
+                    </button>
+                </form>
+            </section>
+
+            <section class="features">
+                <h3>What We Scan</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>📝 Code Analysis</h4>
+                        <p>Detect AI/ML libraries, model training code, and inference pipelines</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>⚙️ Configuration</h4>
+                        <p>Audit configuration files for AI settings and security issues</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🔌 API & Dependencies</h4>
+                        <p>Identify AI service integrations and ML package dependencies</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📊 Compliance Report</h4>
+                        <p>Generate detailed PDF reports with remediation plans</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pricing-info">
+                <h3>Pricing Plans</h3>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h4>Starter</h4>
+                        <div class="price">$500<span>/month</span></div>
+                        <ul>
+                            <li>Up to 3 scans/month</li>
+                            <li>Basic compliance report</li>
+                            <li>Email support</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card featured">
+                        <h4>Professional</h4>
+                        <div class="price">$1,200<span>/month</span></div>
+                        <ul>
+                            <li>Unlimited scans</li>
+                            <li>Full compliance report + dashboard</li>
+                            <li>Remediation planning</li>
+                            <li>Priority support</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card">
+                        <h4>Enterprise</h4>
+                        <div class="price">$2,000<span>/month</span></div>
+                        <ul>
+                            <li>Unlimited scans</li>
+                            <li>Custom compliance rules</li>
+                            <li>API access</li>
+                            <li>Dedicated support</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2026 AI Compliance Shield. Protecting SMEs from EU AI Act penalties.</p>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
