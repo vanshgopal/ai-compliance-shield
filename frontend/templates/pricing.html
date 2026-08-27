@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing — AI Compliance Shield</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <rect width="40" height="40" rx="10" fill="#2563EB"/>
+                        <path d="M20 8L10 14V22C10 27.5 14.3 32.7 20 34C25.7 32.7 30 27.5 30 22V14L20 8Z" fill="white"/>
+                        <path d="M17 20L19 22L23 18" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="logo-text">AI Compliance Shield</span>
+            </div>
+            <nav>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/#features" class="nav-link">Features</a>
+                <a href="/#pricing" class="nav-link">Pricing</a>
+                <a href="/#scan" class="btn btn-primary btn-nav">Free Scan</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="pricing-page">
+                <h1>Choose Your Plan</h1>
+                <p class="section-subtitle">Start free, upgrade when you need more</p>
+
+                <div class="pricing-grid">
+                    <!-- Free Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Free</h3>
+                            <div class="price">$0<span>/forever</span></div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>1 scan per month</li>
+                            <li>Basic compliance report</li>
+                            <li>Community support</li>
+                            <li>1 user</li>
+                        </ul>
+                        <a href="/#scan" class="btn btn-secondary">Start Free</a>
+                    </div>
+
+                    <!-- Starter Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Starter</h3>
+                            <div class="price">$500<span>/month</span></div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>Up to 3 scans/month</li>
+                            <li>Basic compliance report</li>
+                            <li>Email support</li>
+                            <li>1 user</li>
+                        </ul>
+                        <button class="btn btn-primary buy-btn" data-plan="starter" data-price="500">Buy Now</button>
+                    </div>
+
+                    <!-- Professional Plan -->
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3>Professional</h3>
+                            <div class="price">$1,200<span>/month</span></div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>Unlimited scans</li>
+                            <li>Full dashboard + analytics</li>
+                            <li>Remediation planning</li>
+                            <li>Priority support</li>
+                            <li>Up to 10 users</li>
+                        </ul>
+                        <button class="btn btn-primary buy-btn" data-plan="professional" data-price="1200">Buy Now</button>
+                    </div>
+
+                    <!-- Enterprise Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Enterprise</h3>
+                            <div class="price">$2,000<span>/month</span></div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>Unlimited scans</li>
+                            <li>Custom compliance rules</li>
+                            <li>API access</li>
+                            <li>Dedicated support</li>
+                            <li>Unlimited users</li>
+                        </ul>
+                        <button class="btn btn-primary buy-btn" data-plan="enterprise" data-price="2000">Buy Now</button>
+                    </div>
+                </div>
+
+                <div class="payment-info">
+                    <h3>Secure Payment</h3>
+                    <p>Payments are processed securely via Stripe. We never store your card details.</p>
+                    <div class="payment-methods">
+                        <span>Visa</span>
+                        <span>Mastercard</span>
+                        <span>American Express</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                                <rect width="40" height="40" rx="10" fill="#2563EB"/>
+                                <path d="M20 8L10 14V22C10 27.5 14.3 32.7 20 34C25.7 32.7 30 27.5 30 22V14L20 8Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <span class="logo-text">AI Compliance Shield</span>
+                    </div>
+                    <p>Protecting companies from EU AI Act fines since 2026.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/#features">Features</a>
+                    <a href="/#pricing">Pricing</a>
+                    <a href="/#scan">Free Scan</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 AI Compliance Shield. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/static/payment.js"></script>
+</body>
+</html>

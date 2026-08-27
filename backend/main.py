@@ -212,6 +212,60 @@ async def list_scans():
     ]
 
 
+@app.get("/pricing", response_class=HTMLResponse)
+async def pricing_page(request: Request):
+    pricing_path = FRONTEND_DIR / "templates" / "pricing.html"
+    return HTMLResponse(content=pricing_path.read_text(encoding="utf-8"))
+
+
+@app.get("/payment-success", response_class=HTMLResponse)
+async def payment_success(request: Request):
+    return HTMLResponse(content="""
+    <html>
+    <head><title>Payment Successful</title></head>
+    <body style="font-family: Inter, sans-serif; text-align: center; padding: 100px;">
+        <h1>Payment Successful!</h1>
+        <p>Thank you for your purchase.</p>
+        <a href="/" style="color: #2563EB;">Go to Dashboard</a>
+    </body>
+    </html>
+    """)
+
+
+@app.post("/api/create-payment")
+async def create_payment(request: Request):
+    try:
+        body = await request.json()
+        plan = body.get("plan")
+        price = body.get("price")
+        success_url = body.get("success_url", "https://roulette-detail-harmful.ngrok-free.dev/payment-success")
+        cancel_url = body.get("cancel_url", "https://roulette-detail-harmful.ngrok-free.dev/pricing")
+
+        import stripe
+        stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "sk_test_YOUR_KEY_HERE")
+
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {
+                        "name": f"AI Compliance Shield - {plan.title()} Plan",
+                    },
+                    "unit_amount": int(price) * 100,
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
+            success_url=success_url + "?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=cancel_url,
+        )
+
+        return {"url": session.url, "session_id": session.id}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 def _run_scan(company_name: str, project_path: str) -> ComplianceReport:
     code_scanner = CodeScanner(project_path)
     config_scanner = ConfigScanner(project_path)
