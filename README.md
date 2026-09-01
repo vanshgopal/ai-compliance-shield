@@ -143,4 +143,4 @@ Proprietary - All rights reserved.
 
 ### 🤝 Support
 
-For questions or support, contact: support@ai-compliance-shield.com
+For questions or support, contact: vgsingh09@gmail.com

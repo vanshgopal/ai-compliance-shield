@@ -4,6 +4,11 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
 :root {
     --primary: #2563EB;
     --primary-dark: #1D4ED8;
@@ -244,6 +249,7 @@ nav {
 }
 
 .file-upload-area {
+    position: relative;
     border: 2px dashed var(--gray-300);
     border-radius: 12px;
     padding: 40px;

@@ -118,6 +118,14 @@ class PDFReportGenerator:
             "<b>CONFIDENTIAL</b> - This document contains proprietary compliance assessment data.",
             self.styles['CustomBody']
         ))
+        elements.append(Spacer(1, 0.3 * inch))
+        elements.append(Paragraph(
+            "<b>LEGAL DISCLAIMER:</b> This report is an automated, technical code-pattern assessment "
+            "and does not constitute legal advice. It is not a legal audit and does not guarantee "
+            "compliance with the EU AI Act. Consult a qualified EU AI Act lawyer before making any "
+            "compliance decisions.",
+            self.styles['CustomBody']
+        ))
         return elements
 
     def _build_executive_summary(self, report: ComplianceReport) -> list:

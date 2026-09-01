@@ -3,9 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing — AI Compliance Shield</title>
+    <title>EU AI Act Compliance Pricing — Free Scan & Paid Plans | AI Compliance Shield</title>
+    <meta name="description" content="Start free. EU AI Act compliance scans from ₹24,999/month. Scan your AI against the law in 5 minutes, get a compliance score, and avoid fines up to €35M or 7% of global revenue.">
+    <meta name="keywords" content="EU AI Act compliance cost, AI compliance scanner pricing, EU AI Act audit, AI compliance software, high-risk AI requirements">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://vgsr.pythonanywhere.com/pricing">
+    <meta property="og:title" content="EU AI Act Compliance Pricing — Free Scan & Paid Plans">
+    <meta property="og:description" content="Start free. EU AI Act compliance scans from ₹24,999/month. Scan your AI against the law in 5 minutes.">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="/static/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Analytics (GA4) - Replace G-QNZ5VNJ73M with your Measurement ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QNZ5VNJ73M"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QNZ5VNJ73M');
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "AI Compliance Shield",
+      "applicationCategory": "BusinessApplication",
+      "description": "EU AI Act compliance scanner. Audits AI systems against the EU AI Act and issues a compliance score with a remediation plan.",
+      "offers": [
+        {"@type": "Offer", "name": "Starter", "price": "24999", "priceCurrency": "INR", "description": "Up to 3 scans per month, basic compliance report, email support"},
+        {"@type": "Offer", "name": "Professional", "price": "59999", "priceCurrency": "INR", "description": "Unlimited scans, full dashboard, remediation planning, priority support"},
+        {"@type": "Offer", "name": "Enterprise", "price": "99999", "priceCurrency": "INR", "description": "Custom compliance rules, API access, dedicated support"}
+      ]
+    }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -22,9 +51,10 @@
             </div>
             <nav>
                 <a href="/" class="nav-link">Home</a>
-                <a href="/#features" class="nav-link">Features</a>
-                <a href="/#pricing" class="nav-link">Pricing</a>
-                <a href="/#scan" class="btn btn-primary btn-nav">Free Scan</a>
+                <a href="/features" class="nav-link">Features</a>
+                <a href="/how-it-works" class="nav-link">How It Works</a>
+                <a href="/pricing" class="nav-link" style="font-weight:600;">Pricing</a>
+                <a href="/get-started" class="btn btn-primary btn-nav">Free Scan</a>
             </nav>
         </header>
 
@@ -53,7 +83,7 @@
                     <div class="pricing-card">
                         <div class="pricing-header">
                             <h3>Starter</h3>
-                            <div class="price">$500<span>/month</span></div>
+                            <div class="price">₹24,999<span>/month</span></div>
                         </div>
                         <ul class="pricing-features">
                             <li>Up to 3 scans/month</li>
@@ -61,7 +91,7 @@
                             <li>Email support</li>
                             <li>1 user</li>
                         </ul>
-                        <button class="btn btn-primary buy-btn" data-plan="starter" data-price="500">Buy Now</button>
+                        <button class="btn btn-primary buy-btn" data-plan="starter" data-price="24999">Buy Now</button>
                     </div>
 
                     <!-- Professional Plan -->
@@ -69,7 +99,7 @@
                         <div class="pricing-badge">Most Popular</div>
                         <div class="pricing-header">
                             <h3>Professional</h3>
-                            <div class="price">$1,200<span>/month</span></div>
+                            <div class="price">₹59,999<span>/month</span></div>
                         </div>
                         <ul class="pricing-features">
                             <li>Unlimited scans</li>
@@ -78,14 +108,14 @@
                             <li>Priority support</li>
                             <li>Up to 10 users</li>
                         </ul>
-                        <button class="btn btn-primary buy-btn" data-plan="professional" data-price="1200">Buy Now</button>
+                        <button class="btn btn-primary buy-btn" data-plan="professional" data-price="59999">Buy Now</button>
                     </div>
 
                     <!-- Enterprise Plan -->
                     <div class="pricing-card">
                         <div class="pricing-header">
                             <h3>Enterprise</h3>
-                            <div class="price">$2,000<span>/month</span></div>
+                            <div class="price">₹99,999<span>/month</span></div>
                         </div>
                         <ul class="pricing-features">
                             <li>Unlimited scans</li>
@@ -94,18 +124,50 @@
                             <li>Dedicated support</li>
                             <li>Unlimited users</li>
                         </ul>
-                        <button class="btn btn-primary buy-btn" data-plan="enterprise" data-price="2000">Buy Now</button>
+                        <button class="btn btn-primary buy-btn" data-plan="enterprise" data-price="99999">Buy Now</button>
                     </div>
                 </div>
 
                 <div class="payment-info">
                     <h3>Secure Payment</h3>
-                    <p>Payments are processed securely via Stripe. We never store your card details.</p>
+                    <p>Payments are processed securely via Razorpay. We never store your card details.</p>
                     <div class="payment-methods">
                         <span>Visa</span>
                         <span>Mastercard</span>
                         <span>American Express</span>
+                        <span>UPI</span>
                     </div>
+                </div>
+                <p style="color:#6B7280;font-size:13px;line-height:1.6;max-width:820px;margin:24px auto 0;text-align:center;">Disclaimer: AI Compliance Shield provides an automated, technical code-pattern check. It is not legal advice and does not guarantee EU AI Act compliance. Consult a qualified EU AI Act lawyer before making compliance decisions.</p>
+            </section>
+
+            <section style="max-width:820px;margin:0 auto;padding:40px 20px;">
+                <h2 style="font-size:28px;color:#111827;">EU AI Act Compliance — Frequently Asked Questions</h2>
+                <p style="color:#4B5563;line-height:1.7;margin:0 0 24px;">The EU AI Act (Regulation (EU) 2024/1689) is now in force. Here's what compliance really costs — and what it costs if you ignore it.</p>
+
+                <div style="border:1px solid #E5E7EB;border-radius:12px;padding:20px;margin-bottom:14px;">
+                    <h3 style="margin:0 0 8px;font-size:17px;color:#111827;">Is the EU AI Act already in force?</h3>
+                    <p style="margin:0;color:#4B5563;line-height:1.7;">Yes. Enforcement of the core transparency rules — chatbot disclosure, deepfake labelling, and AI-generated content watermarking under Article 50 — began <strong>August 2, 2026</strong>. High-risk system obligations under Annex III apply from <strong>December 2, 2027</strong> following the 2026 Omnibus.</p>
+                </div>
+                <div style="border:1px solid #E5E7EB;border-radius:12px;padding:20px;margin-bottom:14px;">
+                    <h3 style="margin:0 0 8px;font-size:17px;color:#111827;">Why do I need a compliance scan instead of doing it manually?</h3>
+                    <p style="margin:0;color:#4B5563;line-height:1.7;">The Act spans 15 detailed requirement areas — risk management, data governance, technical documentation, record-keeping, human oversight, and more. Manually auditing code, configuration, and dependencies against all of them is slow, error-prone, and expensive. Our scanner checks your whole codebase in minutes and produces an evidence-based report.</p>
+                </div>
+                <div style="border:1px solid #E5E7EB;border-radius:12px;padding:20px;margin-bottom:14px;">
+                    <h3 style="margin:0 0 8px;font-size:17px;color:#111827;">What fines am I exposed to?</h3>
+                    <p style="margin:0;color:#4B5563;line-height:1.7;">Up to <strong>€35 million or 7% of global annual revenue</strong> for prohibited practices, <strong>€15 million or 3%</strong> for most other violations, and <strong>€7.5 million or 1.5%</strong> for supplying incorrect information to authorities. Authorities can also order your product withdrawn from the EU market.</p>
+                </div>
+                <div style="border:1px solid #E5E7EB;border-radius:12px;padding:20px;margin-bottom:14px;">
+                    <h3 style="margin:0 0 8px;font-size:17px;color:#111827;">Is my code safe to upload?</h3>
+                    <p style="margin:0;color:#4B5563;line-height:1.7;">Yes. Scanning runs against your files locally — your source code only leaves your machine if you explicitly upload it. We never store or share your code, and we recommend reviewing the report and remediation plan before sharing anything internally.</p>
+                </div>
+                <div style="border:1px solid #E5E7EB;border-radius:12px;padding:20px;margin-bottom:14px;">
+                    <h3 style="margin:0 0 8px;font-size:17px;color:#111827;">What payment methods do you accept?</h3>
+                    <p style="margin:0;color:#4B5563;line-height:1.7;">All subscriptions are processed securely through Razorpay — Visa, Mastercard, American Express, and UPI. Your card details are never stored on our servers.</p>
+                </div>
+                <div style="border:1px solid #E5E7EB;border-radius:12px;padding:20px;">
+                    <h3 style="margin:0 0 8px;font-size:17px;color:#111827;">What does the compliance score mean?</h3>
+                    <p style="margin:0;color:#4B5563;line-height:1.7;">Your score (0–100%) measures coverage against the EU AI Act requirement engine. It tells you exactly which requirements you satisfy and which are at risk, with prioritized remediation steps so you know what to fix first.</p>
                 </div>
             </section>
         </main>
@@ -125,9 +187,17 @@
                     <p>Protecting companies from EU AI Act fines since 2026.</p>
                 </div>
                 <div class="footer-links">
-                    <a href="/#features">Features</a>
-                    <a href="/#pricing">Pricing</a>
-                    <a href="/#scan">Free Scan</a>
+                    <a href="/">Home</a>
+                    <a href="/features">Features</a>
+                    <a href="/how-it-works">How It Works</a>
+                    <a href="/pricing">Pricing</a>
+                    <a href="/resources">Free Guides</a>
+                    <a href="/blog/eu-ai-act-requirements-checklist-2026">EU AI Act Checklist</a>
+                    <a href="/about">About</a>
+                    <a href="/contact">Contact</a>
+                    <a href="/privacy-policy">Privacy Policy</a>
+                    <a href="/terms">Terms</a>
+                    <a href="/refund-policy">Refund Policy</a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -136,7 +206,29 @@
         </footer>
     </div>
 
-    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="/static/payment.js"></script>
+
+    <!-- Payment Checkout Modal -->
+    <div id="paymentModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(2,6,23,0.85);z-index:1000;align-items:center;justify-content:center;">
+        <div style="background:#1e293b;border-radius:16px;padding:32px;max-width:420px;width:90%;color:#fff;font-family:'Inter',sans-serif;">
+            <h2 style="margin:0 0 6px;font-size:22px;">Checkout</h2>
+            <p style="margin:0 0 20px;color:#94a3b8;font-size:14px;">Secure payment via Razorpay. <strong id="payPlanName" style="color:#fff;"></strong> plan.</p>
+            <div style="margin-bottom:14px;">
+                <label style="display:block;margin-bottom:6px;font-weight:600;font-size:13px;color:#cbd5e1;">Company Name</label>
+                <input id="payCompany" type="text" placeholder="Your Company" style="width:100%;padding:11px;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#fff;box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block;margin-bottom:6px;font-weight:600;font-size:13px;color:#cbd5e1;">Work Email</label>
+                <input id="payEmail" type="email" placeholder="you@company.com" style="width:100%;padding:11px;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#fff;box-sizing:border-box;">
+            </div>
+            <input id="payPlan" type="hidden" value="starter">
+            <div style="display:flex;gap:10px;">
+                <button id="payCancel" type="button" style="flex:1;padding:12px;background:#334155;border:none;border-radius:8px;color:#fff;cursor:pointer;font-weight:600;">Cancel</button>
+                <button id="paySubmit" type="button" style="flex:2;padding:12px;background:#2563EB;border:none;border-radius:8px;color:#fff;cursor:pointer;font-weight:600;">Start Payment</button>
+            </div>
+            <p id="payStatus" style="display:none;margin:16px 0 0;font-size:14px;color:#e2e8f0;text-align:center;"></p>
+        </div>
+    </div>
 </body>
 </html>

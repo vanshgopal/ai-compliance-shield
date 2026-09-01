@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | AI Compliance Shield</title>
+    <meta name="description" content="Contact AI Compliance Shield — reach our team for sales, support, or compliance questions.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://vgsr.pythonanywhere.com/contact">
+    <meta property="og:title" content="Contact AI Compliance Shield">
+    <meta property="og:description" content="Questions about pricing, the EU AI Act, or a compliance report? We typically respond within one business day.">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Analytics (GA4) - Replace G-QNZ5VNJ73M with your Measurement ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QNZ5VNJ73M"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QNZ5VNJ73M');
+    </script>
+    <style>
+        .contact { max-width: 720px; margin: 0 auto; padding: 56px 20px 0; }
+        .contact h1 { font-size: 36px; color: #111827; }
+        .contact p { color: #374151; line-height: 1.75; font-size: 16px; }
+        .contact-card { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 20px 24px; margin: 16px 0; }
+        .contact-card h3 { margin: 0 0 8px; color: #111827; }
+        .contact-form label { display:block; margin: 14px 0 6px; font-weight:600; color:#111827; }
+        .contact-form input, .contact-form textarea { width:100%; padding:11px; border:1px solid #D1D5DB; border-radius:8px; font-size:15px; box-sizing:border-box; }
+        .btn-submit { background:#2563EB; color:#fff; border:none; padding:13px 24px; border-radius:8px; font-weight:700; cursor:pointer; margin-top:16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <rect width="40" height="40" rx="10" fill="#2563EB"/>
+                        <path d="M20 8L10 14V22C10 27.5 14.3 32.7 20 34C25.7 32.7 30 27.5 30 22V14L20 8Z" fill="white"/>
+                    </svg>
+                </div>
+                <span class="logo-text">AI Compliance Shield</span>
+            </div>
+            <nav>
+                <a href="/#features" class="nav-link">Features</a>
+                <a href="/#how-it-works" class="nav-link">How It Works</a>
+                <a href="/#pricing" class="nav-link">Pricing</a>
+                <a href="/blog/eu-ai-act-requirements-checklist-2026" class="nav-link">Guides</a>
+                <a href="/#scan" class="btn btn-primary btn-nav">Free Scan</a>
+            </nav>
+        </header>
+
+        <main class="contact">
+            <h1>Contact Us</h1>
+            <p>Questions about pricing, the EU AI Act, or a compliance report? We typically respond within one business day.</p>
+
+            <div class="contact-card">
+                <h3>Business details</h3>
+                <p><strong>Business name:</strong> Vansh Singh (Sole Proprietorship)</p>
+                <p><strong>Email:</strong> <a href="mailto:vgsingh09@gmail.com" style="color:#2563EB;">vgsingh09@gmail.com</a></p>
+                <p><strong>Business inquiries:</strong> <a href="mailto:vgsingh09@gmail.com" style="color:#2563EB;">vgsingh09@gmail.com</a></p>
+                <p><strong>Registered in:</strong> India</p>
+            </div>
+
+            <div class="contact-card">
+                <h3>Send us a message</h3>
+                <form class="contact-form" onsubmit="alert('Thank you! Your message has been received. We will reply within one business day.'); this.reset(); return false;">
+                    <label>Your name</label>
+                    <input type="text" name="name" required>
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                    <label>Company (optional)</label>
+                    <input type="text" name="company">
+                    <label>Message</label>
+                    <textarea name="message" rows="5" required></textarea>
+                    <button type="submit" class="btn-submit">Send Message</button>
+                </form>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                                <rect width="40" height="40" rx="10" fill="#2563EB"/>
+                                <path d="M20 8L10 14V22C10 27.5 14.3 32.7 20 34C25.7 32.7 30 27.5 30 22V14L20 8Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <span class="logo-text">AI Compliance Shield</span>
+                    </div>
+                    <p>Protecting companies from EU AI Act fines since 2026.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/#features">Features</a>
+                    <a href="/#pricing">Pricing</a>
+                    <a href="/resources">Free Guides</a>
+                    <a href="/blog/eu-ai-act-requirements-checklist-2026">EU AI Act Checklist</a>
+                    <a href="/privacy-policy">Privacy Policy</a>
+                    <a href="/terms">Terms &amp; Conditions</a>
+                    <a href="/refund-policy">Refund Policy</a>
+                    <a href="/contact">Contact Us</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 AI Compliance Shield. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

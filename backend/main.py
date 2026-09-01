@@ -71,6 +71,69 @@ async def root(request: Request):
     return HTMLResponse(content=index_path.read_text(encoding="utf-8"))
 
 
+@app.get("/get-started", response_class=HTMLResponse)
+async def get_started(request: Request):
+    index_path = FRONTEND_DIR / "templates" / "index.html"
+    return HTMLResponse(content=index_path.read_text(encoding="utf-8"))
+
+
+@app.get("/resources", response_class=HTMLResponse)
+async def resources_page(request: Request):
+    path = FRONTEND_DIR / "templates" / "resources.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
+@app.get("/about", response_class=HTMLResponse)
+async def about_page(request: Request):
+    path = FRONTEND_DIR / "templates" / "about.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
+@app.get("/contact", response_class=HTMLResponse)
+async def contact_page(request: Request):
+    path = FRONTEND_DIR / "templates" / "contact.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
+@app.get("/features", response_class=HTMLResponse)
+async def features_page(request: Request):
+    path = FRONTEND_DIR / "templates" / "features.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
+@app.get("/how-it-works", response_class=HTMLResponse)
+async def how_it_works_page(request: Request):
+    path = FRONTEND_DIR / "templates" / "how-it-works.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
+@app.get("/privacy-policy", response_class=HTMLResponse)
+async def privacy_policy_page(request: Request):
+    path = FRONTEND_DIR / "templates" / "privacy-policy.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
+@app.get("/terms", response_class=HTMLResponse)
+async def terms_page(request: Request):
+    path = FRONTEND_DIR / "templates" / "terms.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
+@app.get("/refund-policy", response_class=HTMLResponse)
+async def refund_policy_page(request: Request):
+    path = FRONTEND_DIR / "templates" / "refund-policy.html"
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
+
+
+@app.get("/blog/{slug}", response_class=HTMLResponse)
+async def blog_page(request: Request, slug: str):
+    path = FRONTEND_DIR / "templates" / "blog" / f"{slug}.html"
+    if path.exists():
+        return HTMLResponse(content=path.read_text(encoding="utf-8"))
+    index_path = FRONTEND_DIR / "templates" / "index.html"
+    return HTMLResponse(content=index_path.read_text(encoding="utf-8"))
+
+
 @app.post("/api/scan/upload")
 async def scan_upload(
     company_name: str = "Unknown Company",
