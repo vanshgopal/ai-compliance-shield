@@ -1,11 +1,9 @@
-"""AI Compliance Shield - FastAPI Backend.
+"""AI Compliance Shield - FastAPI Backend (Flat Structure Version).
 
-Automated EU AI Act compliance audit tool for SMEs.
+For PythonAnywhere free tier where all files are in one directory.
 """
 
 import os
-import json
-import shutil
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
@@ -15,16 +13,20 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from pydantic import BaseModel
 
-from .compliance.eu_ai_act import (
-    ComplianceReport, Finding, ComplianceStatus, RiskCategory,
-    classify_risk_level, get_requirements_for_risk,
-    calculate_compliance_score, generate_remediation_plan,
-    EU_AI_ACT_REQUIREMENTS
-)
-from .scanners.code_scanner import CodeScanner
-from .scanners.config_scanner import ConfigScanner
-from .scanners.api_scanner import APIScanner
-from .reports.pdf_generator import PDFReportGenerator
+try:
+    from compliance.eu_ai_act import (
+        ComplianceReport, Finding, ComplianceStatus, RiskCategory,
+        classify_risk_level, get_requirements_for_risk,
+        calculate_compliance_score, generate_remediation_plan,
+        EU_AI_ACT_REQUIREMENTS
+    )
+    from scanners.code_scanner import CodeScanner
+    from scanners.config_scanner import ConfigScanner
+    from scanners.api_scanner import APIScanner
+    from reports.pdf_generator import PDFReportGenerator
+    HAS_SCANNER = True
+except ImportError:
+    HAS_SCANNER = False
 
 app = FastAPI(
     title="AI Compliance Shield",
@@ -32,8 +34,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-FRONTEND_DIR = BASE_DIR / "frontend"
+BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 UPLOADS_DIR = DATA_DIR / "uploads"
 REPORTS_DIR = DATA_DIR / "reports"
@@ -41,18 +42,16 @@ REPORTS_DIR = DATA_DIR / "reports"
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-STATIC_DIR = FRONTEND_DIR / "static"
-TEMPLATES_DIR = FRONTEND_DIR / "templates"
-
+STATIC_DIR = BASE_DIR / "static"
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
-def _find_template(name: str) -> Path:
-    flat = TEMPLATES_DIR / name
-    if flat.exists():
-        return flat
-    return TEMPLATES_DIR / name
+def _read(name: str) -> str:
+    path = BASE_DIR / name
+    if path.exists():
+        return path.read_text(encoding="utf-8")
+    return f"<h1>Page not found: {name}</h1>"
 
 
 class ScanRequest(BaseModel):
@@ -76,62 +75,89 @@ scan_history = {}
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    return HTMLResponse(content=_find_template("index.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("index.html"))
 
 
 @app.get("/get-started", response_class=HTMLResponse)
 async def get_started(request: Request):
-    return HTMLResponse(content=_find_template("index.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("index.html"))
 
 
 @app.get("/resources", response_class=HTMLResponse)
 async def resources_page(request: Request):
-    return HTMLResponse(content=_find_template("resources.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("resources.html"))
 
 
 @app.get("/about", response_class=HTMLResponse)
 async def about_page(request: Request):
-    return HTMLResponse(content=_find_template("about.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("about.html"))
 
 
 @app.get("/contact", response_class=HTMLResponse)
 async def contact_page(request: Request):
-    return HTMLResponse(content=_find_template("contact.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("contact.html"))
 
 
 @app.get("/features", response_class=HTMLResponse)
 async def features_page(request: Request):
-    return HTMLResponse(content=_find_template("features.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("features.html"))
 
 
 @app.get("/how-it-works", response_class=HTMLResponse)
 async def how_it_works_page(request: Request):
-    return HTMLResponse(content=_find_template("how-it-works.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("how-it-works.html"))
 
 
 @app.get("/privacy-policy", response_class=HTMLResponse)
 async def privacy_policy_page(request: Request):
-    return HTMLResponse(content=_find_template("privacy-policy.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("privacy-policy.html"))
 
 
 @app.get("/terms", response_class=HTMLResponse)
 async def terms_page(request: Request):
-    return HTMLResponse(content=_find_template("terms.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("terms.html"))
 
 
 @app.get("/refund-policy", response_class=HTMLResponse)
 async def refund_policy_page(request: Request):
-    return HTMLResponse(content=_find_template("refund-policy.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("refund-policy.html"))
+
+
+@app.get("/pricing", response_class=HTMLResponse)
+async def pricing_page(request: Request):
+    return HTMLResponse(content=_read("pricing.html"))
 
 
 @app.get("/blog/{slug}", response_class=HTMLResponse)
 async def blog_page(request: Request, slug: str):
-    flat = BASE_DIR / "blog" / f"{slug}.html"
-    nested = TEMPLATES_DIR / "blog" / f"{slug}.html"
-    path = flat if flat.exists() else nested
+    path = BASE_DIR / f"{slug}.html"
+    if not path.exists():
+        blog_dir = BASE_DIR / "blog"
+        path = blog_dir / f"{slug}.html"
     if path.exists():
         return HTMLResponse(content=path.read_text(encoding="utf-8"))
-    return HTMLResponse(content=_find_template("index.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_read("index.html"))
+
+
+@app.get("/dashboard/{scan_id}", response_class=HTMLResponse)
+async def dashboard(request: Request, scan_id: str):
+    if scan_id not in scan_history:
+        return HTMLResponse(content=_read("index.html"))
+    return HTMLResponse(content=_read("dashboard.html"))
+
+
+@app.get("/payment-success", response_class=HTMLResponse)
+async def payment_success(request: Request):
+    return HTMLResponse(content="""
+    <html>
+    <head><title>Payment Successful</title></head>
+    <body style="font-family: Inter, sans-serif; text-align: center; padding: 100px;">
+        <h1>Payment Successful!</h1>
+        <p>Thank you for your purchase.</p>
+        <a href="/" style="color: #2563EB;">Go to Dashboard</a>
+    </body>
+    </html>
+    """)
 
 
 @app.post("/api/scan/upload")
@@ -139,6 +165,9 @@ async def scan_upload(
     company_name: str = "Unknown Company",
     files: list[UploadFile] = File(...),
 ):
+    if not HAS_SCANNER:
+        return {"error": "Scanner not available on this deployment"}
+
     scan_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     scan_dir = UPLOADS_DIR / scan_id
     scan_dir.mkdir(parents=True, exist_ok=True)
@@ -166,6 +195,9 @@ async def scan_upload(
 
 @app.post("/api/scan/path")
 async def scan_path(request: ScanRequest):
+    if not HAS_SCANNER:
+        return {"error": "Scanner not available on this deployment"}
+
     scan_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     project_path = Path(request.project_path)
 
@@ -189,7 +221,7 @@ async def scan_path(request: ScanRequest):
 
 @app.get("/api/report/{scan_id}/pdf")
 async def download_pdf(scan_id: str):
-    if scan_id not in scan_history:
+    if not HAS_SCANNER or scan_id not in scan_history:
         raise HTTPException(status_code=404, detail="Scan not found")
 
     report = scan_history[scan_id]
@@ -205,7 +237,7 @@ async def download_pdf(scan_id: str):
 
 @app.get("/api/report/{scan_id}/json")
 async def get_report_json(scan_id: str):
-    if scan_id not in scan_history:
+    if not HAS_SCANNER or scan_id not in scan_history:
         raise HTTPException(status_code=404, detail="Scan not found")
 
     report = scan_history[scan_id]
@@ -231,22 +263,10 @@ async def get_report_json(scan_id: str):
     }
 
 
-@app.get("/dashboard/{scan_id}", response_class=HTMLResponse)
-async def dashboard(request: Request, scan_id: str):
-    if scan_id not in scan_history:
-        return HTMLResponse(content=_find_template("index.html").read_text(encoding="utf-8"))
-
-    report = scan_history[scan_id]
-    import jinja2
-    tmpl_dir = str(TEMPLATES_DIR if TEMPLATES_DIR.exists() else BASE_DIR)
-    env = jinja2.Environment(loader=jinja2.FileSystemLoader(tmpl_dir))
-    tmpl = env.get_template("dashboard.html")
-    html = tmpl.render(scan_id=scan_id, report=report)
-    return HTMLResponse(content=html)
-
-
 @app.get("/api/requirements")
 async def get_requirements():
+    if not HAS_SCANNER:
+        return []
     return [
         {
             "id": r.id,
@@ -263,6 +283,8 @@ async def get_requirements():
 
 @app.get("/api/scans")
 async def list_scans():
+    if not HAS_SCANNER:
+        return []
     return [
         {
             "scan_id": sid,
@@ -275,33 +297,14 @@ async def list_scans():
     ]
 
 
-@app.get("/pricing", response_class=HTMLResponse)
-async def pricing_page(request: Request):
-    return HTMLResponse(content=_find_template("pricing.html").read_text(encoding="utf-8"))
-
-
-@app.get("/payment-success", response_class=HTMLResponse)
-async def payment_success(request: Request):
-    return HTMLResponse(content="""
-    <html>
-    <head><title>Payment Successful</title></head>
-    <body style="font-family: Inter, sans-serif; text-align: center; padding: 100px;">
-        <h1>Payment Successful!</h1>
-        <p>Thank you for your purchase.</p>
-        <a href="/" style="color: #2563EB;">Go to Dashboard</a>
-    </body>
-    </html>
-    """)
-
-
 @app.post("/api/create-payment")
 async def create_payment(request: Request):
     try:
         body = await request.json()
         plan = body.get("plan")
         price = body.get("price")
-        success_url = body.get("success_url", "https://roulette-detail-harmful.ngrok-free.dev/payment-success")
-        cancel_url = body.get("cancel_url", "https://roulette-detail-harmful.ngrok-free.dev/pricing")
+        success_url = body.get("success_url", "https://vgsr.pythonanywhere.com/payment-success")
+        cancel_url = body.get("cancel_url", "https://vgsr.pythonanywhere.com/pricing")
 
         import stripe
         stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "sk_test_YOUR_KEY_HERE")
@@ -328,7 +331,7 @@ async def create_payment(request: Request):
         return {"error": str(e)}
 
 
-def _run_scan(company_name: str, project_path: str) -> ComplianceReport:
+def _run_scan(company_name: str, project_path: str):
     code_scanner = CodeScanner(project_path)
     config_scanner = ConfigScanner(project_path)
     api_scanner = APIScanner(project_path)
@@ -348,7 +351,7 @@ def _run_scan(company_name: str, project_path: str) -> ComplianceReport:
             status=ComplianceStatus.COMPLIANT,
             evidence="No AI/ML systems detected in the scanned project.",
             risk_level="none",
-            recommendation="Continue monitoring for AI/ML usage. Consider implementing AI governance policies proactively."
+            recommendation="Continue monitoring for AI/ML usage."
         ))
 
     overall_score = calculate_compliance_score(all_findings)
