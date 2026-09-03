@@ -3,4 +3,4 @@ Allow: /
 Disallow: /static/
 Disallow: /data/
 
-Sitemap: https://vgsr.pythonanywhere.com/static/sitemap.xml
+Sitemap: https://aicomplianceshield.site/sitemap.xml

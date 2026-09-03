@@ -68,7 +68,7 @@
 
             <div class="contact-card">
                 <h3>Send us a message</h3>
-                <form class="contact-form" onsubmit="alert('Thank you! Your message has been received. We will reply within one business day.'); this.reset(); return false;">
+                <form class="contact-form" id="contactForm">
                     <label>Your name</label>
                     <input type="text" name="name" required>
                     <label>Email</label>
@@ -112,5 +112,38 @@
             </div>
         </footer>
     </div>
+    <script>
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = this;
+        const btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+        try {
+            const res = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: form.name.value,
+                    email: form.email.value,
+                    company: form.company.value,
+                    message: form.message.value
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('Thank you! Your message has been received. We will reply within one business day.');
+                form.reset();
+            } else {
+                alert(data.error || 'Something went wrong. Please try again.');
+            }
+        } catch(err) {
+            alert('Something went wrong. Please try again.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Send Message';
+        }
+    });
+    </script>
 </body>
 </html>

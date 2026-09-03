@@ -439,6 +439,59 @@ async def create_lead(request: Request):
         return {"success": False}
 
 
+@app.get("/sitemap.xml", response_class=HTMLResponse)
+async def sitemap():
+    path = STATIC_DIR / "sitemap.xml"
+    if path.exists():
+        return HTMLResponse(content=path.read_text(encoding="utf-8"), media_type="application/xml")
+    return HTMLResponse(content="Not found", status_code=404)
+
+
+@app.get("/robots.txt")
+async def robots():
+    path = STATIC_DIR / "robots.txt"
+    if path.exists():
+        return HTMLResponse(content=path.read_text(encoding="utf-8"), media_type="text/plain")
+    return HTMLResponse(content="User-agent: *\nAllow: /", media_type="text/plain")
+
+
+@app.post("/api/contact")
+async def contact_form(request: Request):
+    try:
+        body = await request.json()
+        name = body.get("name", "")
+        email = body.get("email", "")
+        company = body.get("company", "")
+        message = body.get("message", "")
+        if not name or not email or not message:
+            return {"success": False, "error": "Name, email, and message are required"}
+        leads_file = DATA_DIR / "contacts.json"
+        contacts = []
+        if leads_file.exists():
+            contacts = json.loads(leads_file.read_text(encoding="utf-8"))
+        contacts.append({
+            "name": name, "email": email, "company": company,
+            "message": message, "date": datetime.now().isoformat(),
+        })
+        leads_file.write_text(json.dumps(contacts, indent=2), encoding="utf-8")
+        return {"success": True}
+    except Exception:
+        return {"success": False, "error": "Failed to send message"}
+
+
+def _read_html(name: str) -> str:
+    for d in [TEMPLATES_DIR, BASE_DIR]:
+        p = d / name
+        if p.exists():
+            return p.read_text(encoding="utf-8")
+    return "<h1>Page not found</h1><p><a href='/'>Go home</a></p>"
+
+
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    return HTMLResponse(content=_read_html("404.html"), status_code=404)
+
+
 def _run_scan(company_name: str, project_path: str) -> ComplianceReport:
     code_scanner = CodeScanner(project_path)
     config_scanner = ConfigScanner(project_path)
