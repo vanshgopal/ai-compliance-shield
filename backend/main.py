@@ -479,6 +479,49 @@ async def contact_form(request: Request):
         return {"success": False, "error": "Failed to send message"}
 
 
+@app.post("/api/referral/track")
+async def track_referral(request: Request):
+    try:
+        body = await request.json()
+        referrals_file = DATA_DIR / "referrals.json"
+        referrals = []
+        if referrals_file.exists():
+            referrals = json.loads(referrals_file.read_text(encoding="utf-8"))
+        referrals.append({
+            "code": body.get("referral_code"),
+            "page": body.get("page"),
+            "date": datetime.now().isoformat(),
+        })
+        referrals_file.write_text(json.dumps(referrals, indent=2), encoding="utf-8")
+        return {"success": True}
+    except Exception:
+        return {"success": False}
+
+
+@app.post("/api/newsletter/subscribe")
+async def subscribe_newsletter(request: Request):
+    try:
+        body = await request.json()
+        email = body.get("email", "")
+        if not email or not "@" in email:
+            return {"success": False, "error": "Valid email required"}
+        subs_file = DATA_DIR / "subscribers.json"
+        subs = []
+        if subs_file.exists():
+            subs = json.loads(subs_file.read_text(encoding="utf-8"))
+        if any(s.get("email") == email for s in subs):
+            return {"success": True, "message": "Already subscribed"}
+        subs.append({
+            "email": email,
+            "subscribed": datetime.now().isoformat(),
+            "source": body.get("source", "website"),
+        })
+        subs_file.write_text(json.dumps(subs, indent=2), encoding="utf-8")
+        return {"success": True}
+    except Exception:
+        return {"success": False}
+
+
 def _read_html(name: str) -> str:
     for d in [TEMPLATES_DIR, BASE_DIR]:
         p = d / name
