@@ -14,7 +14,7 @@ from collections import defaultdict
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
@@ -68,6 +68,10 @@ RATE_LIMIT_WINDOW = 60
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
+        USER_AGENT = request.headers.get("user-agent", "").lower()
+        ALLOWED_BOTS = ["googlebot", "bingbot", "yandex", "duckduckbot", "baiduspider", "slurp"]
+        if any(bot in USER_AGENT for bot in ALLOWED_BOTS):
+            return await call_next(request)
         client_ip = request.client.host if request.client else "unknown"
         now = time.time()
         rate_limit_store[client_ip] = [
@@ -439,20 +443,28 @@ async def create_lead(request: Request):
         return {"success": False}
 
 
-@app.get("/sitemap.xml", response_class=HTMLResponse)
+@app.get("/sitemap.xml", response_class=Response)
 async def sitemap():
     path = STATIC_DIR / "sitemap.xml"
     if path.exists():
-        return HTMLResponse(content=path.read_text(encoding="utf-8"), media_type="application/xml")
-    return HTMLResponse(content="Not found", status_code=404)
+        return Response(
+            content=path.read_text(encoding="utf-8"),
+            media_type="application/xml",
+            headers={"Content-Type": "application/xml; charset=utf-8"},
+        )
+    return Response(content="Not found", status_code=404)
 
 
-@app.get("/robots.txt")
+@app.get("/robots.txt", response_class=Response)
 async def robots():
     path = STATIC_DIR / "robots.txt"
     if path.exists():
-        return HTMLResponse(content=path.read_text(encoding="utf-8"), media_type="text/plain")
-    return HTMLResponse(content="User-agent: *\nAllow: /", media_type="text/plain")
+        return Response(
+            content=path.read_text(encoding="utf-8"),
+            media_type="text/plain",
+            headers={"Content-Type": "text/plain; charset=utf-8"},
+        )
+    return Response(content="User-agent: *\nAllow: /", media_type="text/plain")
 
 
 @app.post("/api/contact")
