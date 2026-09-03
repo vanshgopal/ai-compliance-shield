@@ -8,3 +8,4 @@ reportlab
 pyyaml
 requests
 python-dotenv
+razorpay

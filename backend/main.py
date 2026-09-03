@@ -294,38 +294,87 @@ async def payment_success(request: Request):
     """)
 
 
-@app.post("/api/create-payment")
-async def create_payment(request: Request):
+@app.get("/api/payment/config")
+async def payment_config():
+    return {"key_id": os.getenv("RAZORPAY_KEY_ID", "")}
+
+
+@app.post("/api/payment/create-order")
+async def create_order(request: Request):
     try:
+        import razorpay
         body = await request.json()
-        plan = body.get("plan")
-        price = body.get("price")
-        success_url = body.get("success_url", "https://roulette-detail-harmful.ngrok-free.dev/payment-success")
-        cancel_url = body.get("cancel_url", "https://roulette-detail-harmful.ngrok-free.dev/pricing")
+        plan = body.get("plan", "starter")
+        company = body.get("company", "")
+        email = body.get("email", "")
 
-        import stripe
-        stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "sk_test_YOUR_KEY_HERE")
+        PRICES = {"starter": 2499900, "professional": 5999900, "enterprise": 9999900}
+        amount = PRICES.get(plan, 2499900)
 
-        session = stripe.checkout.Session.create(
-            payment_method_types=["card"],
-            line_items=[{
-                "price_data": {
-                    "currency": "usd",
-                    "product_data": {
-                        "name": f"AI Compliance Shield - {plan.title()} Plan",
-                    },
-                    "unit_amount": int(price) * 100,
-                },
-                "quantity": 1,
-            }],
-            mode="payment",
-            success_url=success_url + "?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=cancel_url,
-        )
+        client = razorpay.Client(auth=(
+            os.getenv("RAZORPAY_KEY_ID", ""),
+            os.getenv("RAZORPAY_KEY_SECRET", ""),
+        ))
 
-        return {"url": session.url, "session_id": session.id}
+        order = client.order.create({
+            "amount": amount,
+            "currency": "INR",
+            "receipt": f"{plan}_{company}",
+            "notes": {"plan": plan, "company": company, "email": email},
+        })
+
+        return {
+            "order_id": order["id"],
+            "amount": order["amount"],
+            "currency": order["currency"],
+            "key_id": os.getenv("RAZORPAY_KEY_ID", ""),
+        }
     except Exception as e:
         return {"error": str(e)}
+
+
+@app.post("/api/payment/verify")
+async def verify_payment(request: Request):
+    try:
+        import razorpay
+        body = await request.json()
+
+        client = razorpay.Client(auth=(
+            os.getenv("RAZORPAY_KEY_ID", ""),
+            os.getenv("RAZORPAY_KEY_SECRET", ""),
+        ))
+
+        client.utility.verify_payment_signature({
+            "razorpay_order_id": body.get("razorpay_order_id"),
+            "razorpay_payment_id": body.get("razorpay_payment_id"),
+            "razorpay_signature": body.get("razorpay_signature"),
+        })
+
+        return {"success": True}
+    except Exception:
+        return {"success": False}
+
+
+@app.post("/api/leads")
+async def create_lead(request: Request):
+    try:
+        body = await request.json()
+        leads_file = DATA_DIR / "leads.json"
+        leads = []
+        if leads_file.exists():
+            leads = json.loads(leads_file.read_text(encoding="utf-8"))
+        leads.append({
+            "name": body.get("name"),
+            "email": body.get("email"),
+            "company": body.get("company"),
+            "status": body.get("status", "new"),
+            "notes": body.get("notes", ""),
+            "date": datetime.now().isoformat(),
+        })
+        leads_file.write_text(json.dumps(leads, indent=2), encoding="utf-8")
+        return {"success": True}
+    except Exception:
+        return {"success": False}
 
 
 def _run_scan(company_name: str, project_path: str) -> ComplianceReport:
