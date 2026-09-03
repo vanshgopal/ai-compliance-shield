@@ -6,13 +6,17 @@ Automated EU AI Act compliance audit tool for SMEs.
 import os
 import json
 import shutil
+import time
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
+from collections import defaultdict
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
 
 from .compliance.eu_ai_act import (
@@ -31,6 +35,54 @@ app = FastAPI(
     description="EU AI Act Compliance Audit Tool for SMEs",
     version="1.0.0",
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://aicomplianceshield.site", "https://www.aicomplianceshield.site"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+    allow_credentials=True,
+)
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://checkout.razorpay.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://api.razorpay.com;"
+        return response
+
+
+app.add_middleware(SecurityHeadersMiddleware)
+
+
+rate_limit_store = defaultdict(list)
+RATE_LIMIT_REQUESTS = 60
+RATE_LIMIT_WINDOW = 60
+
+
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        client_ip = request.client.host if request.client else "unknown"
+        now = time.time()
+        rate_limit_store[client_ip] = [
+            t for t in rate_limit_store[client_ip] if now - t < RATE_LIMIT_WINDOW
+        ]
+        if len(rate_limit_store[client_ip]) >= RATE_LIMIT_REQUESTS:
+            return JSONResponse(
+                status_code=429,
+                content={"error": "Too many requests. Please try again later."},
+            )
+        rate_limit_store[client_ip].append(now)
+        return await call_next(request)
+
+
+app.add_middleware(RateLimitMiddleware)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR / "frontend"
@@ -139,12 +191,22 @@ async def scan_upload(
     company_name: str = "Unknown Company",
     files: list[UploadFile] = File(...),
 ):
+    total_size = 0
+    MAX_UPLOAD_SIZE = 10 * 1024 * 1024
+    for file in files:
+        content = await file.read()
+        total_size += len(content)
+        if total_size > MAX_UPLOAD_SIZE:
+            raise HTTPException(status_code=413, detail="Total upload size exceeds 10MB limit")
+        file.file.seek(0)
+
     scan_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     scan_dir = UPLOADS_DIR / scan_id
     scan_dir.mkdir(parents=True, exist_ok=True)
 
     for file in files:
-        file_path = scan_dir / file.filename
+        safe_name = Path(file.filename).name
+        file_path = scan_dir / safe_name
         with open(file_path, "wb") as f:
             content = await file.read()
             f.write(content)
