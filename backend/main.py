@@ -73,7 +73,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         ALLOWED_BOTS = ["googlebot", "bingbot", "yandex", "duckduckbot", "baiduspider", "slurp"]
         if any(bot in USER_AGENT for bot in ALLOWED_BOTS):
             return await call_next(request)
-        client_ip = request.client.host if request.client else "unknown"
+        client_ip = (
+            request.headers.get("cf-connecting-ip")
+            or request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+            or (request.client.host if request.client else "unknown")
+        )
         now = time.time()
         rate_limit_store[client_ip] = [
             t for t in rate_limit_store[client_ip] if now - t < RATE_LIMIT_WINDOW
@@ -82,6 +86,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return JSONResponse(
                 status_code=429,
                 content={"error": "Too many requests. Please try again later."},
+                headers={"Retry-After": "60"},
             )
         rate_limit_store[client_ip].append(now)
         return await call_next(request)
