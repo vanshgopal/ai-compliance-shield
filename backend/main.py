@@ -29,6 +29,7 @@ from .scanners.code_scanner import CodeScanner
 from .scanners.config_scanner import ConfigScanner
 from .scanners.api_scanner import APIScanner
 from .reports.pdf_generator import PDFReportGenerator
+from .seo.pages import build_page, all_slugs, _keyword_slug, build_sitemap_xml
 
 app = FastAPI(
     title="AI Compliance Shield",
@@ -445,14 +446,11 @@ async def create_lead(request: Request):
 
 @app.get("/sitemap.xml", response_class=Response)
 async def sitemap():
-    path = STATIC_DIR / "sitemap.xml"
-    if path.exists():
-        return Response(
-            content=path.read_text(encoding="utf-8"),
-            media_type="application/xml",
-            headers={"Content-Type": "application/xml; charset=utf-8"},
-        )
-    return Response(content="Not found", status_code=404)
+    return Response(
+        content=build_sitemap_xml(),
+        media_type="application/xml",
+        headers={"Content-Type": "application/xml; charset=utf-8"},
+    )
 
 
 @app.get("/robots.txt", response_class=Response)
@@ -544,6 +542,15 @@ def _read_html(name: str) -> str:
 
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc):
+    from .seo.pages import INDUSTRIES
+    slug = request.url.path.strip("/")
+    key = slug
+    if slug.startswith("eu-ai-act-compliance-"):
+        key = slug[len("eu-ai-act-compliance-"):]
+    if key in INDUSTRIES:
+        page = build_page(key)
+        if page:
+            return HTMLResponse(content=page)
     return HTMLResponse(content=_read_html("404.html"), status_code=404)
 
 
