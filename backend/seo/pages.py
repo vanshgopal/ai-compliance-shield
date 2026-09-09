@@ -16,11 +16,93 @@ INDUSTRIES = {
         "title": "Healthcare",
         "risk": "high-risk",
         "rules": "Clinical decision-support systems that help diagnose or treat patients are treated as high-risk under the EU AI Act. Companies must keep technical documentation, ensure human oversight, and log every assisted decision. Even wellness chatbots that only give general health tips usually stay outside the high-risk rules.",
+        "deep": [
+            {
+                "heading": "Clinical decision support is high-risk by default",
+                "body": (
+                    "Under Annex III of the Act, AI used by doctors and nurses to reach diagnostic or "
+                    "therapeutic decisions — recommending a diagnosis, suggesting a dose, triaging images, "
+                    "or predicting patient deterioration — is presumed high-risk. That triggers the full "
+                    "high-risk package: a risk-management system (Article 9), data-governance controls "
+                    "(Article 10), technical documentation (Article 11), record-keeping (Article 12), "
+                    "transparency and user instructions (Article 13), human oversight (Article 14), and "
+                    "accuracy, robustness and cybersecurity requirements (Article 15). None of this is "
+                    "optional once your system is in scope."
+                ),
+            },
+            {
+                "heading": "What the regulator will inspect in your code",
+                "body": (
+                    "Expect auditors to look for: training and validation datasets with documented "
+                    "provenance and consent (especially patient data under GDPR), evidence that the "
+                    "system was tested on the population it will actually serve, bias and drift "
+                    "monitoring, audit trails that log every assisted decision alongside the human "
+                    "override, and a named human who can review and reverse the system's output. "
+                    "Your codebase should already contain these hooks — a scanner can tell you "
+                    "which ones are missing before an inspector does."
+                ),
+            },
+            {
+                "heading": "Wellness apps: lower risk, but not zero obligations",
+                "body": (
+                    "General health-tip chatbots and fitness trackers usually stay outside the "
+                    "high-risk rules because they are not used for diagnosis or treatment. They "
+                    "still trigger limited-risk transparency duties: a chatbot must identify itself "
+                    "as AI, and AI-generated content needs labelling. The boundary is murky in "
+                    "practice — if the app can be interpreted as supporting a clinical decision, "
+                    "the safe assumption is high-risk."
+                ),
+            },
+        ],
+        "faqs": [
+            ("Is my wellness chatbot high-risk?", "Not by default. If it only gives general health tips and cannot influence diagnosis or treatment, it typically stays limited-risk — but must still disclose that it is AI and label AI-generated content."),
+            ("Does clinical AI need a CE mark?", "AI that is, or is a safety component of, a medical device must meet both the MDR/IVDR and the AI Act (Annex I route). Standalone clinical decision-support software that is not a device follows the Annex III route under Article 6(2)."),
+            ("Can the scanner prove compliance?", "It produces evidence-based coverage of the 15 requirement areas so you know which gaps to fix. A CE mark and a formal conformity assessment still require certification work — the scan shows you where your code already satisfies and where it falls short."),
+        ],
     },
     "fintech": {
         "title": "FinTech & Banking",
         "risk": "high-risk",
         "rules": "AI that scores credit, prices insurance, or detects fraud is treated as high-risk. Providers need risk-management systems, data-governance controls, and audit logs. If an AI system decides who gets a loan, a human must be able to review and override the decision.",
+        "deep": [
+            {
+                "heading": "Credit scoring is explicitly in scope",
+                "body": (
+                    "Annex III point 5(b) covers AI used to evaluate the creditworthiness of natural "
+                    "persons or establish their credit score. That means your lending-decision model "
+                    "is high-risk by default. Lenders must be able to explain decisions to customers, "
+                    "retain logs of every scoring decision, monitor drift, and give a human authority "
+                    "to review and overturn machine decisions before they are final — duties that "
+                    "map to Articles 9–15 of the Act."
+                ),
+            },
+            {
+                "heading": "Fraud detection and AML: mostly lower risk — with exceptions",
+                "body": (
+                    "Detecting payment fraud or AML anomalies is generally not high-risk on its own "
+                    "unless the tool also blocks a person's access to essential services. Where an "
+                    "automated fraud decision stops a transaction, denies a payment account, or "
+                    "blacklists a customer, consumer-protection duties from both the AI Act and "
+                    "PSD2/RBA apply. The safest position is to treat scoring-style outputs as "
+                    "high-risk and document them accordingly."
+                ),
+            },
+            {
+                "heading": "Third-party models still make you the deployer",
+                "body": (
+                    "Buying a credit-risk or KYC model from a vendor does not remove your obligations. "
+                    "As deployer you must ensure human oversight, maintain records, and confirm the "
+                    "model is suitable for your population. You cannot outsource deployer duties to "
+                    "your provider — regulators hold banks and fintechs accountable for the models "
+                    "they run, whoever wrote them."
+                ),
+            },
+        ],
+        "faqs": [
+            ("Is credit scoring AI banned?", "No — it is high-risk, not prohibited. You can run it, but you must comply with the full high-risk regime and offer human review of decisions."),
+            ("Does the scanner handle third-party risk models?", "Yes. Scanning your codebase and config surfaces both your own code and the integration points that consume vendor models, so you can document deployer-side controls."),
+            ("What about insurance pricing?","AI that prices insurance or sets premiums is high-risk under Annex III. The same technical documentation, logging and human-oversight duties apply as to credit scoring."),
+        ],
     },
     "hr-recruiting": {
         "title": "HR & Recruiting",
@@ -116,6 +198,43 @@ INDUSTRIES = {
         "title": "Voice Assistants",
         "risk": "limited-risk",
         "rules": "Voice assistants must disclose they are AI and can be used as generative models. Voice-cloning and synthetic-voice tools face deepfake disclosure rules. Sensitive biometric authentication raises the risk tier considerably.",
+        "deep": [
+            {
+                "heading": "Disclosure is mandatory, not optional",
+                "body": (
+                    "Article 50(1) requires systems that interact with people to disclose they are "
+                    "machine-based. A voice assistant that picks up a phone call, greets a customer, "
+                    "or answers a support ticket must openly state it is not human before or at the "
+                    "start of the interaction. Saying nothing because it is 'obvious from context' "
+                    "only applies when no reasonable person could be fooled — which, for natural "
+                    "synthetic voices, is rarely true."
+                ),
+            },
+            {
+                "heading": "Voice cloning: provider and deployer duties",
+                "body": (
+                    "Synthetic-voice and clone tools output content that resembles a real person, so "
+                    "they sit in the deepfake regime: machine-readable marking built in by the "
+                    "provider, disclosure by whoever publishes. If the clone is used for identity "
+                    "or authentication (banking, contact centres), you add biometric obligations "
+                    "and, depending on use, a high-risk classification under Annex III."
+                ),
+            },
+            {
+                "heading": "Emotion recognition: employer and school use is banned",
+                "body": (
+                    "AI that infers a person's emotions in workplaces and educational institutions "
+                    "has been a prohibited practice since February 2025. Call-centre 'sentiment "
+                    "scoring' can drift into this if it claims to detect emotional state — separate "
+                    "customer-satisfaction signals are safer than emotion labels."
+                ),
+            },
+        ],
+        "faqs": [
+            ("Does my IVR need a script change?", "Yes. The disclosure must happen at the start of the interaction, so your call-flow needs a line like 'You are speaking with an AI assistant' before any conversation."),
+            ("Is voice-cloning software legal?", "The technology is legal; the output is what is regulated. Cloning requires consent, machine-readable marking, and disclosure — and is banned outright for non-consensual intimate imagery from December 2026."),
+            ("When is voice AI high-risk?", "When it makes access decisions (banking, recruitment, public services) or performs biometric identification of individuals. Otherwise it usually stays limited-risk."),
+        ],
     },
     "automotive": {
         "title": "Automotive",
@@ -251,6 +370,45 @@ INDUSTRIES = {
         "title": "Deepfakes",
         "risk": "limited-risk",
         "rules": "Deepfakes face strict disclosure rules. AI-generated or manipulated content that resembles real people must be labelled. Failure to label is directly punishable. Synthetic content at scale also triggers GPAI transparency obligations.",
+        "deep": [
+            {
+                "heading": "The labelling regime is already live",
+                "body": (
+                    "Article 50 applies in full: AI output that is generated or manipulated to resemble "
+                    "real people or events but looks authentic must be machine-readable marked and "
+                    "disclosed to affected people and, when published to inform the public, clearly "
+                    "labelled. This is not a future obligation — it has been enforced since August "
+                    "2026. A deepfake generator that ships without marking its own output is the "
+                    "easiest fine for a regulator to issue."
+                ),
+            },
+            {
+                "heading": "Provider vs deployer: who labels what",
+                "body": (
+                    "If you develop the synthesis or clone tool, you are the provider and must design "
+                    "machine-readable marking into the output. If you only run the tool to make "
+                    "content, you are the deployer and own the human-facing disclosure. Both sides "
+                    "can be fined — which is why scan reports on both the generation pipeline and "
+                    "the serving/watermarking layer matter."
+                ),
+            },
+            {
+                "heading": "2026 prohibitions raise the stakes",
+                "body": (
+                    "The Digital Omnibus (Regulation (EU) 2026/1744) adds two banned practices from "
+                    "December 2026: generating realistic non-consensual intimate imagery and "
+                    "synthetic sexual-abuse material. Running or distributing tools that do this "
+                    "moves you from a transparency violation to a Tier-1 prohibited-practice "
+                    "violation — the €35M/7% fine tier — and removes the product from the EU market "
+                    "entirely."
+                ),
+            },
+        ],
+        "faqs": [
+            ("Do we have to watermark every image?", "Only output that resembles real people or events and could be mistaken for authentic. Anime-style art or obviously synthetic graphics normally does not require disclosure."),
+            ("Is watermarking enough?", "No. You need machine-readable marking, human-facing disclosure, and a deployment record. The watermark must survive resizing, screenshots and re-uploads — a basic corner logo usually fails an audit."),
+            ("What if we only distribute, not generate?", "Then you are the deployer. You still owe human-facing disclosure when the synthetic content is published, even if you did not build the generator."),
+        ],
     },
     "chatbots": {
         "title": "Chatbots",
@@ -382,52 +540,25 @@ def _internal_links(key):
     return "\n".join(out)
 
 
-def build_page(key: str) -> str:
-    data = INDUSTRIES[key]
-    slug = _keyword_slug(key)
-    url = f"{BASE_URL}/{slug}"
-    title = _title_for(key, data)
-    description = _description_for(key, data)
-    h1 = f"{data['title']} under the EU AI Act: Your Compliance Guide"
-    jsonld = json.dumps(_jsonld(key, data), ensure_ascii=False, indent=2)
-
-    sections_html = ""
-    for idx, sec in enumerate(SECTIONS):
-        if sec.get("cta"):
-            sections_html += f"""
-            <div class="cta-box">
-                <h3>Free EU AI Act Compliance Scan</h3>
-                <p>See your score in 2 minutes. No signup, no code stored.</p>
-                <a class="btn-white" href="/">Scan Your Codebase Now</a>
-            </div>"""
-        else:
-            sections_html += f"""
-            <h2>{sec['heading']}</h2>
-            <p>{sec['body']}</p>"""
-
-    related_links = "\n".join(
-        f'<p class="art-link"><a href="{u}">{label}</a></p>' for label, u in RELATED_BLOGS
-    )
-    related_links += "\n" + _internal_links(key)
-
+def _shell(*, meta_title, description, keywords, canonical_url, jsonld, tag_line, h1, intro_html, risk_box_html="", sections_html="", faq_html="", related_html=""):
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{html.escape(title)}</title>
+    <title>{html.escape(meta_title)}</title>
     <meta name="description" content="{html.escape(description)}">
-    <meta name="keywords" content="{html.escape(key.replace('-', ' '))}, EU AI Act {data['title'].lower()}, AI Act compliance {data['title'].lower()}, {data['risk']} AI">
+    <meta name="keywords" content="{html.escape(keywords)}">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{url}">
+    <link rel="canonical" href="{canonical_url}">
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="{html.escape(title)}">
+    <meta name="twitter:title" content="{html.escape(meta_title)}">
     <meta name="twitter:description" content="{html.escape(description)}">
-    <meta property="og:title" content="{html.escape(title)}">
+    <meta property="og:title" content="{html.escape(meta_title)}">
     <meta property="og:description" content="{html.escape(description)}">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="{url}">
+    <meta property="og:url" content="{canonical_url}">
     <link rel="stylesheet" href="/static/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QNZ5VNJ73M"></script>
@@ -458,6 +589,9 @@ def build_page(key: str) -> str:
         .more-guides {{ background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 20px 24px; margin: 32px 0; }}
         .art-link a {{ color: #2563EB; text-decoration: none; }}
         .art-link a:hover {{ text-decoration: underline; }}
+        .faq-item {{ border: 1px solid #E5E7EB; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }}
+        .faq-item h3 {{ margin: 0 0 6px; font-size: 17px; color: #111827; }}
+        .faq-item p {{ margin: 0; }}
         @media (max-width: 640px) {{ .article h1 {{ font-size: 30px; }} .article h2 {{ font-size: 22px; }} }}
     </style>
 </head>
@@ -483,24 +617,28 @@ def build_page(key: str) -> str:
 
         <div class="article">
             <div class="article-head">
-                <span class="tag">EU AI Act · {html.escape(data['risk'])} tier</span>
+                <span class="tag">{html.escape(tag_line)}</span>
                 <h1>{html.escape(h1)}</h1>
                 <p class="article-meta">Updated September 2026 · EU AI Act (Regulation (EU) 2024/1689)</p>
             </div>
 
-            <p><strong>{html.escape(data['rules'])}</strong></p>
+            {intro_html}
 
-            <div class="risk-box">
-                <strong>Typical risk tier: {html.escape(data['risk'])}</strong>
-                <br>
-                Your actual tier depends on exactly how your system is built and used. A free scan of your codebase is the fastest way to confirm it.
-            </div>
+            {risk_box_html}
 
             {sections_html}
 
+            <div class="cta-box">
+                <h3>Free EU AI Act Compliance Scan</h3>
+                <p>See your score in 2 minutes. No signup, no code stored.</p>
+                <a class="btn-white" href="/">Scan Your Codebase Now</a>
+            </div>
+
+            {faq_html}
+
             <div class="more-guides">
                 <h3>Related guides</h3>
-                {related_links}
+                {related_html}
             </div>
         </div>
 
@@ -541,6 +679,70 @@ def build_page(key: str) -> str:
 """
 
 
+def _faq_html(faqs):
+    if not faqs:
+        return ""
+    items = "".join(
+        f'<div class="faq-item"><h3>{html.escape(q)}</h3><p>{html.escape(a)}</p></div>'
+        for q, a in faqs
+    )
+    return f'<h2>Frequently Asked Questions</h2>{items}'
+
+
+def build_page(key: str) -> str:
+    data = INDUSTRIES[key]
+    slug = _keyword_slug(key)
+    url = f"{BASE_URL}/{slug}"
+    title = _title_for(key, data)
+    description = _description_for(key, data)
+    h1 = f"{data['title']} under the EU AI Act: Your Compliance Guide"
+    jsonld = json.dumps(_jsonld(key, data), ensure_ascii=False, indent=2)
+
+    intro_html = f"<p><strong>{html.escape(data['rules'])}</strong></p>"
+    risk_box_html = (
+        '<div class="risk-box">'
+        f"<strong>Typical risk tier: {html.escape(data['risk'])}</strong><br>"
+        "Your actual tier depends on exactly how your system is built and used. "
+        "A free scan of your codebase is the fastest way to confirm it."
+        "</div>"
+    )
+
+    sections_html = ""
+    for idx, sec in enumerate(SECTIONS):
+        if sec.get("cta"):
+            continue
+        sections_html += f"<h2>{sec['heading']}</h2><p>{sec['body']}</p>"
+    for sec in data.get("deep", []):
+        sections_html += f"""
+            <h2>{html.escape(sec['heading'])}</h2>
+            <p>{html.escape(sec['body'])}</p>"""
+
+    keywords = (
+        f"{key.replace('-', ' ')}, EU AI Act {data['title'].lower()}, "
+        f"AI Act compliance {data['title'].lower()}, {data['risk']} AI"
+    )
+
+    related_links = "\n".join(
+        f'<p class="art-link"><a href="{u}">{label}</a></p>' for label, u in RELATED_BLOGS
+    )
+    related_links += "\n" + _internal_links(key)
+
+    return _shell(
+        meta_title=title,
+        description=description,
+        keywords=keywords,
+        canonical_url=url,
+        jsonld=jsonld,
+        tag_line=f"EU AI Act · {data['risk']} tier",
+        h1=h1,
+        intro_html=intro_html,
+        risk_box_html=risk_box_html,
+        sections_html=sections_html,
+        faq_html=_faq_html(data.get("faqs", [])),
+        related_html=related_links,
+    )
+
+
 def all_slugs() -> list:
     return sorted(INDUSTRIES.keys())
 
@@ -552,6 +754,7 @@ def build_sitemap_xml() -> str:
     entries = [
         {"loc": BASE_URL, "priority": "1.0", "freq": "weekly"},
         {"loc": f"{BASE_URL}/pricing", "priority": "0.9", "freq": "monthly"},
+        {"loc": f"{BASE_URL}/free-ai-act-scan", "priority": "0.9", "freq": "monthly"},
         {"loc": f"{BASE_URL}/features", "priority": "0.8", "freq": "monthly"},
         {"loc": f"{BASE_URL}/how-it-works", "priority": "0.8", "freq": "monthly"},
         {"loc": f"{BASE_URL}/resources", "priority": "0.8", "freq": "weekly"},
@@ -568,6 +771,13 @@ def build_sitemap_xml() -> str:
     for key in all_slugs():
         entries.append({
             "loc": f"{BASE_URL}/{_keyword_slug(key)}",
+            "priority": "0.7",
+            "freq": "monthly",
+        })
+    from .buyer_pages import buyer_slugs as _buyer_slugs
+    for key in _buyer_slugs():
+        entries.append({
+            "loc": f"{BASE_URL}/eu-ai-act-compliance-{key}",
             "priority": "0.7",
             "freq": "monthly",
         })

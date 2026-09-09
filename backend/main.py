@@ -30,6 +30,8 @@ from .scanners.config_scanner import ConfigScanner
 from .scanners.api_scanner import APIScanner
 from .reports.pdf_generator import PDFReportGenerator
 from .seo.pages import build_page, all_slugs, _keyword_slug, build_sitemap_xml
+from .seo.buyer_pages import build_page as build_buyer_page
+from .seo.buyer_pages import PAGES as BUYER_PAGES
 
 app = FastAPI(
     title="AI Compliance Shield",
@@ -352,6 +354,11 @@ async def pricing_page(request: Request):
     return HTMLResponse(content=_find_template("pricing.html").read_text(encoding="utf-8"))
 
 
+@app.get("/free-ai-act-scan", response_class=HTMLResponse)
+async def free_scan_landing(request: Request):
+    return HTMLResponse(content=_find_template("free-ai-act-scan.html").read_text(encoding="utf-8"))
+
+
 @app.get("/payment-success", response_class=HTMLResponse)
 async def payment_success(request: Request):
     return HTMLResponse(content="""
@@ -559,6 +566,10 @@ async def not_found_handler(request: Request, exc):
         key = slug[len("eu-ai-act-compliance-"):]
     if key in INDUSTRIES:
         page = build_page(key)
+        if page:
+            return HTMLResponse(content=page)
+    if key in BUYER_PAGES:
+        page = build_buyer_page(key)
         if page:
             return HTMLResponse(content=page)
     return HTMLResponse(content=_read_html("404.html"), status_code=404)
