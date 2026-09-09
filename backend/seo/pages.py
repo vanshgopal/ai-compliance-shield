@@ -6,6 +6,7 @@ and links back to the compliance scanner.
 """
 
 import html
+import json
 from datetime import datetime
 
 BASE_URL = "https://aicomplianceshield.site"
@@ -388,7 +389,7 @@ def build_page(key: str) -> str:
     title = _title_for(key, data)
     description = _description_for(key, data)
     h1 = f"{data['title']} under the EU AI Act: Your Compliance Guide"
-    jsonld = _jsonld(key, data)
+    jsonld = json.dumps(_jsonld(key, data), ensure_ascii=False, indent=2)
 
     sections_html = ""
     for idx, sec in enumerate(SECTIONS):

@@ -379,9 +379,14 @@ async def create_order(request: Request):
         plan = body.get("plan", "starter")
         company = body.get("company", "")
         email = body.get("email", "")
+        currency = body.get("currency", "EUR")
 
-        PRICES = {"starter": 2499900, "professional": 5999900, "enterprise": 9999900}
-        amount = PRICES.get(plan, 2499900)
+        PRICES = {
+            "INR": {"starter": 2499900, "professional": 5999900, "enterprise": 9999900},
+            "EUR": {"starter": 29900, "professional": 69900, "enterprise": 119900},
+        }
+        price_map = PRICES.get(currency, PRICES["EUR"])
+        amount = price_map.get(plan, price_map["starter"])
 
         client = razorpay.Client(auth=(
             os.getenv("RAZORPAY_KEY_ID", ""),
@@ -390,7 +395,7 @@ async def create_order(request: Request):
 
         order = client.order.create({
             "amount": amount,
-            "currency": "INR",
+            "currency": currency,
             "receipt": f"{plan}_{company}",
             "notes": {"plan": plan, "company": company, "email": email},
         })

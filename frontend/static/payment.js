@@ -1,5 +1,6 @@
 // Razorpay Payment Integration
 let razorpayKeyId = '';
+let currentCurrency = 'EUR';
 const PLAN_DISPLAY = { starter: 'Starter', professional: 'Professional', enterprise: 'Enterprise' };
 
 async function initPayment() {
@@ -17,6 +18,8 @@ async function buy(plan) {
         alert('Payment system is warming up. Please try again in a moment.');
         return;
     }
+    const btn = document.querySelector('.buy-btn[data-plan="' + plan + '"]');
+    currentCurrency = (btn && btn.dataset.currency) || currentCurrency;
     document.getElementById('payPlanName').textContent = PLAN_DISPLAY[plan] || plan;
     document.getElementById('payPlan').value = plan;
     document.getElementById('paymentModal').style.display = 'flex';
@@ -44,7 +47,7 @@ async function submitPayment() {
         const res = await fetch('/api/payment/create-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ plan: plan, price: 0, company: company, email: email })
+            body: JSON.stringify({ plan: plan, price: 0, company: company, email: email, currency: currentCurrency })
         });
         const data = await res.json();
 
@@ -140,6 +143,24 @@ function closeModal() {
     document.getElementById('payEmail').value = '';
 }
 
+function setCurrency(currency) {
+    currentCurrency = currency === 'INR' ? 'INR' : 'EUR';
+    document.querySelectorAll('.buy-btn').forEach(function (button) {
+        button.dataset.currency = currentCurrency;
+        const both = button.dataset.price;
+        if (both) {
+            button.setAttribute('data-price', currentCurrency === 'EUR' ? both.split('|')[0] : both.split('|')[1]);
+        }
+    });
+    document.querySelectorAll('[data-eur][data-inr]').forEach(function (el) {
+        const showEur = currentCurrency === 'EUR';
+        el.innerHTML = showEur ? el.dataset.eur : el.dataset.inr;
+    });
+    document.querySelectorAll('.currency-label').forEach(function (el) {
+        el.classList.toggle('active', el.dataset.currency === currentCurrency);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     initPayment();
 
@@ -150,6 +171,15 @@ document.addEventListener('DOMContentLoaded', function () {
             buy(plan);
         });
     });
+
+    document.querySelectorAll('.currency-label').forEach(function (el) {
+        el.addEventListener('click', function () {
+            setCurrency(this.dataset.currency);
+        });
+    });
+    if (document.querySelector('.currency-label')) {
+        setCurrency('EUR');
+    }
 
     const paySubmit = document.getElementById('paySubmit');
     if (paySubmit) {

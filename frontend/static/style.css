@@ -518,6 +518,12 @@ nav {
     color: var(--gray-500);
 }
 
+.currency-label.active {
+    background: #fff;
+    color: var(--gray-900);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
 .pricing-features {
     list-style: none;
     margin-bottom: 24px;
