@@ -106,7 +106,7 @@
 
             <div class="gate">
                 <h2>Get both documents instantly</h2>
-                <p>No credit card. Just tell us where to send the downloads.</p>
+                <p>No credit card. Enter your details to unlock instant downloads.</p>
                 <form class="gate-form" id="resForm">
                     <input type="email" id="resEmail" placeholder="Work email" required>
                     <input type="text" id="resCompany" placeholder="Company name" required>
@@ -165,21 +165,27 @@
             const doc = document.getElementById('resDoc').value;
             msg.textContent = 'Sending...';
             try {
-                await fetch('/api/leads', {
+                const leadResponse = await fetch('/api/leads', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: company,
-                        email: email,
-                        company: company,
-                        status: 'new',
-                        notes: 'Downloaded resource: ' + doc
-                    })
+                    body: JSON.stringify({ name: company, email: email, company: company, status: 'new', notes: 'Requested resource: ' + doc })
                 });
-                const target = doc === 'both'
-                    ? '/api/resource/checklist.pdf'
-                    : doc === 'onepager' ? '/api/resource/onepager.pdf' : '/api/resource/checklist.pdf';
-                window.location.href = target;
+                const leadResult = await leadResponse.json();
+                if (!leadResponse.ok || !leadResult.success) throw new Error('Could not save request');
+                const targets = doc === 'both'
+                    ? ['/api/resource/checklist.pdf', '/api/resource/onepager.pdf']
+                    : [doc === 'onepager' ? '/api/resource/onepager.pdf' : '/api/resource/checklist.pdf'];
+                msg.textContent = 'Your download' + (targets.length > 1 ? 's are' : ' is') + ' ready.';
+                targets.forEach(function (target, index) {
+                    window.setTimeout(function () {
+                        const link = document.createElement('a');
+                        link.href = target;
+                        link.download = '';
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                    }, index * 500);
+                });
             } catch (err) {
                 msg.textContent = 'Something went wrong. Please try again.';
             }
