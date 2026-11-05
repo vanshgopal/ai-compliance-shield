@@ -4,6 +4,7 @@ Automated EU AI Act compliance audit tool for SMEs.
 """
 
 import os
+import re
 import json
 import shutil
 import time
@@ -14,7 +15,7 @@ from collections import defaultdict
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, Response, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
@@ -57,7 +58,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://checkout.razorpay.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://api.razorpay.com;"
+        response.headers["Content-Security-Policy"] = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://checkout.razorpay.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://www.google-analytics.com https://www.googletagmanager.com https://api.razorpay.com https://checkout.razorpay.com; frame-src https://api.razorpay.com https://checkout.razorpay.com; form-action 'self' https://api.razorpay.com https://checkout.razorpay.com;"
         return response
 
 
@@ -98,7 +99,7 @@ app.add_middleware(RateLimitMiddleware)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR / "frontend"
-DATA_DIR = BASE_DIR / "data"
+DATA_DIR = Path(os.getenv("DATA_DIR", str(BASE_DIR / "data"))).expanduser().resolve()
 UPLOADS_DIR = DATA_DIR / "uploads"
 REPORTS_DIR = DATA_DIR / "reports"
 
@@ -145,7 +146,7 @@ async def root(request: Request):
 
 @app.get("/get-started", response_class=HTMLResponse)
 async def get_started(request: Request):
-    return HTMLResponse(content=_find_template("index.html").read_text(encoding="utf-8"))
+    return RedirectResponse(url="/#scan", status_code=301)
 
 
 @app.get("/resources", response_class=HTMLResponse)
@@ -195,7 +196,7 @@ async def blog_page(request: Request, slug: str):
     path = flat if flat.exists() else nested
     if path.exists():
         return HTMLResponse(content=path.read_text(encoding="utf-8"))
-    return HTMLResponse(content=_find_template("index.html").read_text(encoding="utf-8"))
+    return HTMLResponse(content=_find_template("404.html").read_text(encoding="utf-8"), status_code=404)
 
 
 @app.post("/api/scan/upload")
@@ -383,39 +384,39 @@ async def create_order(request: Request):
     try:
         import razorpay
         body = await request.json()
-        plan = body.get("plan", "starter")
-        company = body.get("company", "")
-        email = body.get("email", "")
-        currency = body.get("currency", "EUR")
+        plan = str(body.get("plan", "starter")).lower()
+        company = str(body.get("company", "")).strip()[:160]
+        email = str(body.get("email", "")).strip()[:254]
+        currency = str(body.get("currency", "EUR")).upper()
 
-        PRICES = {
+        prices = {
             "INR": {"starter": 2499900, "professional": 5999900, "enterprise": 9999900},
             "EUR": {"starter": 29900, "professional": 69900, "enterprise": 119900},
         }
-        price_map = PRICES.get(currency, PRICES["EUR"])
-        amount = price_map.get(plan, price_map["starter"])
+        if plan not in {"starter", "professional", "enterprise"}:
+            raise HTTPException(status_code=400, detail="Invalid plan")
+        if currency not in prices:
+            raise HTTPException(status_code=400, detail="Unsupported currency")
+        if not company or not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+            raise HTTPException(status_code=400, detail="Company and valid email are required")
+        key_id = os.getenv("RAZORPAY_KEY_ID", "").strip()
+        key_secret = os.getenv("RAZORPAY_KEY_SECRET", "").strip()
+        if not key_id or not key_secret:
+            raise HTTPException(status_code=503, detail="Payment is not configured")
 
-        client = razorpay.Client(auth=(
-            os.getenv("RAZORPAY_KEY_ID", ""),
-            os.getenv("RAZORPAY_KEY_SECRET", ""),
-        ))
-
+        amount = prices[currency][plan]
+        client = razorpay.Client(auth=(key_id, key_secret))
         order = client.order.create({
             "amount": amount,
             "currency": currency,
-            "receipt": f"{plan}_{company}",
+            "receipt": f"{plan}_{int(time.time())}",
             "notes": {"plan": plan, "company": company, "email": email},
         })
-
-        return {
-            "order_id": order["id"],
-            "amount": order["amount"],
-            "currency": order["currency"],
-            "key_id": os.getenv("RAZORPAY_KEY_ID", ""),
-        }
-    except Exception as e:
-        return {"error": str(e)}
-
+        return {"order_id": order["id"], "amount": order["amount"], "currency": order["currency"], "key_id": key_id}
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=502, detail="Could not create payment order. Check Razorpay configuration and server logs.")
 
 @app.post("/api/payment/verify")
 async def verify_payment(request: Request):
@@ -459,6 +460,22 @@ async def create_lead(request: Request):
         return {"success": True}
     except Exception:
         return {"success": False}
+
+
+@app.get("/api/resource/{resource_name}.pdf")
+async def download_resource(resource_name: str):
+    """Serve the free resource PDFs from the bundled resources directory."""
+    allowed = {
+        "checklist": "eu-ai-act-sme-checklist.pdf",
+        "onepager": "eu-ai-act-deadlines-and-fines.pdf",
+    }
+    filename = allowed.get(resource_name)
+    if not filename:
+        raise HTTPException(status_code=404, detail="Resource not found")
+    pdf_path = STATIC_DIR / "resources" / filename
+    if not pdf_path.is_file():
+        raise HTTPException(status_code=404, detail="Resource file is unavailable")
+    return FileResponse(pdf_path, media_type="application/pdf", filename=filename)
 
 
 @app.get("/sitemap.xml", response_class=Response)
