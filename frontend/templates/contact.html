@@ -117,6 +117,12 @@
         </footer>
     </div>
     <script>
+    const contactTopic = new URLSearchParams(window.location.search).get('topic');
+    if (contactTopic === 'enterprise') {
+        const messageField = document.querySelector('#contactForm textarea[name="message"]');
+        if (messageField) messageField.value = 'I am interested in Enterprise plans. Please contact me with details.';
+    }
+
     document.getElementById('contactForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const form = this;
