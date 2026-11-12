@@ -73,7 +73,7 @@
         <div class="res-page">
             <div class="res-hero">
                 <h1>Free EU AI Act Resources for Small Software Teams</h1>
-                <p>Two practical documents to help your company get compliant fast — built specifically for SMEs and solo builders who can't hire a full compliance team.</p>
+                <p>A practical, step-by-step document to help your company prepare for the EU AI Act — built for SMEs and solo builders.</p>
             </div>
 
             <div class="res-grid">
@@ -91,29 +91,20 @@
                     <p><em>→ Download behind the form below.</em></p>
                 </div>
                 <div class="res-card">
-                    <span class="res-doc">PDF · 2 pages</span>
-                    <h2>EU AI Act Deadlines &amp; Fines 2026 — One-Pager</h2>
-                    <p>A quick reference sheet showing every milestone and penalty tier at a glance.</p>
-                    <ul>
-                        <li>All enforcement dates (past &amp; upcoming)</li>
-                        <li>Penalty tiers: up to €35M or 7% of global revenue</li>
-                        <li>Who the Act applies to (including non-EU companies)</li>
-                        <li>Which obligations apply to your risk tier</li>
-                    </ul>
-                    <p><em>→ Download behind the form below.</em></p>
+                    <span class="res-doc">More resources coming soon</span>
+                    <h2>More EU AI Act Guides Are in Progress</h2>
+                    <p>We are preparing additional practical resources. The SME compliance checklist is available to download now.</p>
                 </div>
             </div>
 
             <div class="gate">
-                <h2>Get both documents instantly</h2>
-                <p>No credit card. Enter your details to unlock instant downloads.</p>
+                <h2>Get the checklist instantly</h2>
+                <p>No credit card. Enter your details to unlock the free checklist.</p>
                 <form class="gate-form" id="resForm">
                     <input type="email" id="resEmail" placeholder="Work email" required>
                     <input type="text" id="resCompany" placeholder="Company name" required>
                     <select id="resDoc">
                         <option value="checklist">7-Step Checklist</option>
-                        <option value="onepager">Deadlines &amp; Fines One-Pager</option>
-                        <option value="both">Both documents</option>
                     </select>
                     <button type="submit" class="btn">Get Free Resources →</button>
                 </form>
@@ -172,9 +163,7 @@
                 });
                 const leadResult = await leadResponse.json();
                 if (!leadResponse.ok || !leadResult.success) throw new Error('Could not save request');
-                const targets = doc === 'both'
-                    ? ['/api/resource/checklist.pdf', '/api/resource/onepager.pdf']
-                    : [doc === 'onepager' ? '/api/resource/onepager.pdf' : '/api/resource/checklist.pdf'];
+                const targets = ['/api/resource/checklist.pdf'];
                 msg.textContent = 'Your download' + (targets.length > 1 ? 's are' : ' is') + ' ready.';
                 targets.forEach(function (target, index) {
                     window.setTimeout(function () {
