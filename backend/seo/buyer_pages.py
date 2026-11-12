@@ -130,8 +130,8 @@ PAGES = {
         ],
     },
     "tool": {
-        "name": "EU AI Act compliance tool",
-        "h1": "Free EU AI Act Compliance Tool — Check Your AI in 2 Minutes",
+        "name": "EU AI Act compliance checker",
+        "h1": "Free EU AI Act Compliance Checker for SMEs",
         "intro": (
             "A compliance tool should give you an answer quickly. The EU AI Act obligations are "
             "complex, but finding out where you stand does not have to be. This free tool scans "
