@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /static/
 Disallow: /data/
 
 Sitemap: https://aicomplianceshield.site/sitemap.xml
