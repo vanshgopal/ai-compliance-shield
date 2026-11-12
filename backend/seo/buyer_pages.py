@@ -259,8 +259,16 @@ def build_page(key: str):
     data = PAGES[key]
     slug = f"eu-ai-act-compliance-{key}"
     url = f"{BASE_URL}/{slug}"
-    meta_title = f"{data['h1']} | AI Compliance Shield"
-    description = data["intro"][:150].replace("\n", " ").strip() + " Free scan, no signup."
+    brand_suffix = " | AI Compliance Shield"
+    meta_title = f"{data['name']}{brand_suffix}"
+    if len(meta_title) > 60:
+        meta_title = data["name"]
+
+    # Use a concise, page-specific description without appending boilerplate
+    # that pushes the snippet beyond typical search-result lengths.
+    description = " ".join(data["intro"].split())
+    if len(description) > 155:
+        description = description[:152].rsplit(" ", 1)[0].rstrip(" ,;:-") + "…"
 
     jsonld = json.dumps({
         "@context": "https://schema.org",
