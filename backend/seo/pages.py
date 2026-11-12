@@ -748,9 +748,9 @@ def all_slugs() -> list:
 
 
 def build_sitemap_xml() -> str:
-    from datetime import date
-
-    today = date.today().isoformat()
+    # Do not publish a fabricated lastmod date. Google uses lastmod as a
+    # freshness signal, so omit it until genuine per-URL modification dates
+    # are available from the content source.
     entries = [
         {"loc": BASE_URL, "priority": "1.0", "freq": "weekly"},
         {"loc": f"{BASE_URL}/pricing", "priority": "0.9", "freq": "monthly"},
@@ -787,7 +787,6 @@ def build_sitemap_xml() -> str:
     for e in entries:
         lines.append("  <url>")
         lines.append(f"    <loc>{e['loc']}</loc>")
-        lines.append(f"    <lastmod>{today}</lastmod>")
         lines.append(f"    <changefreq>{e['freq']}</changefreq>")
         lines.append(f"    <priority>{e['priority']}</priority>")
         lines.append("  </url>")
