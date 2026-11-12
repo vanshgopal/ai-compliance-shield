@@ -509,14 +509,17 @@ def _keyword_slug(key: str) -> str:
 
 
 def _title_for(key, data):
-    return f"{data['title']} & the EU AI Act: Tier, Rules & a Free Compliance Scan"
+    # Keep generated industry titles concise while retaining the page's
+    # primary topic and industry modifier.
+    return f"EU AI Act: {data['title']} Compliance Guide"
 
 
 def _description_for(key, data):
+    # Unique, readable snippets for each industry page. Avoid repetitive
+    # boilerplate and keep descriptions within typical search-result lengths.
     return (
-        f"EU AI Act compliance for {data['title'].lower()}. "
-        f"Compute your {data['risk']} tier, the obligations that come with it, and scan your "
-        f"codebase free in 2 minutes. No signup, no code stored."
+        f"Understand EU AI Act rules for {data['title']}: likely risk tier, key obligations "
+        f"and practical controls. Scan your code to identify potential technical gaps."
     )
 
 
