@@ -1,9 +1,9 @@
+import os
 import http.client
 import ssl
 
 username = 'vgsr'
-token = 'c9cb9a6dea5fe56f86e5b317d44114fd591b28ce'
-
+token = os.environ["PYTHONANYWHERE_API_TOKEN"]
 # Read a local file
 local_path = r'C:\Users\pc\Desktop\ai-compliance-shield\frontend\static\robots.txt'
 with open(local_path, 'rb') as f:
