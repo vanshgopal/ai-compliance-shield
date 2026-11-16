@@ -1,9 +1,10 @@
+import os
 import urllib.request
 import json
 import time
 
 username = 'vgsr'
-token = 'c9cb9a6dea5fe56f86e5b317d44114fd591b28ce'
+token = os.environ["PYTHONANYWHERE_API_TOKEN"]
 headers = {'Authorization': 'Token {}'.format(token), 'Content-Type': 'application/json'}
 
 def api_get(path):
