@@ -1,9 +1,9 @@
+import os
 import urllib.request
 import json
 
 username = 'vgsr'
-token = 'c9cb9a6dea5fe56f86e5b317d44114fd591b28ce'
-
+token = os.environ["PYTHONANYWHERE_API_TOKEN"]
 # Try listing home directory
 paths_to_try = [
     '/home/vgsr/',
