@@ -1,8 +1,8 @@
+import os
 import urllib.request
 
 username = 'vgsr'
-token = 'c9cb9a6dea5fe56f86e5b317d44114fd591b28ce'
-
+token = os.environ["PYTHONANYWHERE_API_TOKEN"]
 # List root directory
 for path in ['/home/vgsr/', '/home/vgsr/ai-compliance-shield/', '/home/vgsr/ai-compliance-shield/frontend/', '/home/vgsr/ai-compliance-shield/frontend/templates/', '/home/vgsr/ai-compliance-shield/backend/']:
     url = 'https://www.pythonanywhere.com/api/v0/user/{}/files{}'.format(username, path)
