@@ -2,7 +2,7 @@ import urllib.request
 import os
 
 username = 'vgsr'
-token = 'c9cb9a6dea5fe56f86e5b317d44114fd591b28ce'
+token = os.environ["PYTHONANYWHERE_API_TOKEN"]
 base_url = 'https://www.pythonanywhere.com/api/v0/user/{}/files'.format(username)
 
 LOCAL = r'C:\Users\pc\Desktop\ai-compliance-shield'
